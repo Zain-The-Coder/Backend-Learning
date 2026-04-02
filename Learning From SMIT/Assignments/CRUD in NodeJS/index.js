@@ -43,3 +43,15 @@ app.patch("/users/:id" , (req , res) => {
     res.send(data)
 })
 
+
+app.put("/users/:id" , (req , res) => {
+    const {id} = req.params ;
+    const data = users.find(u => u.id === Number(id));
+    if (!data) {
+        return res.status(404).send({ message: "User not found" });
+    }
+    if(req.body.email ? data.email = req.body.email : data.email) ;
+    if(req.body.username ? data.username = req.body.username : data.username) ;
+    if(req.body.password ? data.password = req.body.password : data.password) ;
+    res.send(data)
+})
