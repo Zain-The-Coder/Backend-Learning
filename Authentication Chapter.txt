@@ -1,0 +1,9 @@
+Authentication k 4 main parts hotay hain :
+
+Validation : 
+	Kya User ny data sahi bhi diya hai ya phir ni , us process ko jb ap user ka data check kro
+validation khehlata hai .
+
+FOR EXAMPLE : 
+	user email : 5228398338   and correct email format is : "zain@gmail.com"
+         Is example may user ny email ke jaga phone number enter krdiya , jo k validation error kehlata hai.

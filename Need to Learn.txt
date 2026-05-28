@@ -1,0 +1,4 @@
+const connection = mongoose.connect(url)
+=> Learn Connection
+
+=> Process.exit(_)

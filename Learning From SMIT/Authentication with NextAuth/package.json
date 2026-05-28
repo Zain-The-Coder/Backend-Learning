@@ -1,0 +1,14 @@
+{
+  "name": "authentication-with-nextauth",
+  "version": "1.0.0",
+  "description": "This is authentication with nextjs and express js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zain Ur Rehman",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
