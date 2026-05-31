@@ -3,7 +3,7 @@ import userModel from "../models/user.model.js";
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import config from "../config/config.js";
-import { error } from "console";
+
 
 export async function registerUser(req, res) {
     try {
@@ -15,7 +15,6 @@ export async function registerUser(req, res) {
             ]
         });
 
-        // 1. FIX: Yahan 'return' lagana zaroori hai taake code agay na chale
         if (isAlreadyExist) {
             return res.status(409).json({
                 message: "Email Or Username Already Taken By Another User",
@@ -30,20 +29,32 @@ export async function registerUser(req, res) {
             password: hashedPassword
         });
 
-        const token = jwt.sign({
+        const accessToken = jwt.sign({
             id: user._id
         }, config.JWT_SECRET, {
-            expiresIn: "1d"
+            expiresIn: "15m"
+        });
+
+        const refreshToken = jwt.sign({
+            id : user._id
+        } , config.JWT_SECRET , {
+            expiresIn : '1d'
+        });
+        
+        res.cookie("refreshToken" , refreshToken , {
+            httpOnly : true , 
+            secure : true ,
+            sameSite : 'strict' , 
+            maxAge : 7 * 24 * 60 * 60 * 1000
         });
 
         res.status(201).json({
             message: "User Created Successfully !",
             userData: user,
-            userToken: token
+            userToken: accessToken
         });
         
     } catch (e) {
-        // 2. FIX: res.send(500) nahi hota, res.status(500) hota hai
         res.status(500).json({
             error_Message: "User Not Created Due To : " + e.message
         });
@@ -68,11 +79,40 @@ export async function getMe (req , res) {
             message : "User Fetched Successfully !" ,
             userData : user
         });
-        
+
 
     } catch (e) {
         res.status(500).json({
             error_Message : "User Not Found Due to" + e.message
         })
     }
+}
+
+export async function refreshToken (req , res) {
+    const refreshToken = req.cookies.refreshToken;
+
+    if(!refreshToken) {
+        return res.status(409).json({
+            error_Message : "Token Not Found !"
+        })
+    };
+
+    const decoded = jwt.verify(refreshToken , config.JWT_SECRET);
+
+    const accessToken = jwt.sign({
+        id : decoded._id
+    } , config.JWT_SECRET , {
+        expiresIn : '15m'
+    });
+
+    const refresh_Token = jwt.sign({
+        id : decoded._id
+    }  , config.JWT_SECRET , {
+        expiresIn : "7d"
+    });
+
+    res.status(200).json({ 
+        message : "Access Token Generated Successfully !" , 
+        accessToken 
+    }); 
 }
